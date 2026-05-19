@@ -1,0 +1,8 @@
+## Fix lỗi "Allowed memory size exhausted" trong XAMPP
+## Thêm 3 dòng này vào file wp-config.php (trước dòng "/* That's all, stop editing! */")
+## Mở file C:\xampp\htdocs\truyentranh\wp-config.php, tìm dòng:
+/* That's all, stop editing! Happy publishing. */
+
+define('WP_MEMORY_LIMIT', '256M');
+define('WP_MAX_MEMORY_LIMIT', '512M');
+ini_set('memory_limit', '256M');
