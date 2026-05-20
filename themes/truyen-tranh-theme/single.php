@@ -28,9 +28,9 @@ if ($post_type === 'manga') {
     </div>
     <?php get_footer();
 }
-// tránh lỗi trường hợp vòng lặp bị kẹt fallback về giao diện trang chủ (file "index.php")
- * Single Manga Template
- * 
- * Displays individual manga details with chapters list
- */
+// // tránh lỗi trường hợp vòng lặp bị kẹt fallback về giao diện trang chủ (file "index.php")
+//  * Single Manga Template
+//  * 
+//  * Displays individual manga details with chapters list
+//  */
 

@@ -61,7 +61,7 @@ define('EAGER_PAGES', 5);
 <div class="reader-wrap">
 
     <!-- HEADER -->
-    <div class="reader-header">
+    <div class="reader-header" id="reader-header">
         <div class="container reader-header-inner">
             <?php if ($truyen) : ?>
                 <a href="<?php echo get_permalink($truyen_id); ?>" class="back-link">

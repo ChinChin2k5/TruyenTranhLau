@@ -1,8 +1,7 @@
 <?php
 /**
  * Single Chapter Reader Template
- * 
- * Displays manga chapter with images/pages
+ * * Displays manga chapter with images/pages
  */
 
 get_header();
@@ -12,9 +11,11 @@ $chapter_number = get_post_meta($manga_id, '_chapter_number', true);
 $chapter_title = get_post_meta($manga_id, '_chapter_title', true);
 $manga_title = get_post_parent();
 
-// Get chapter images from gallery or ACF field
-
-$raw_images = get_field('chapter_images', $manga_id); // Lấy cục text chứa các link ảnh
+// SỬA ĐỔI: Tối ưu lấy dữ liệu (Hỗ trợ cả Custom Fields mặc định lẫn ACF nếu có)
+$raw_images = get_post_meta($manga_id, 'chapter_images', true);
+if (empty($raw_images) && function_exists('get_field')) {
+    $raw_images = get_field('chapter_images', $manga_id);
+}
 
 if (!empty($raw_images)) {
     // Băm cục text ra thành nhiều mảnh, cứ thấy dấu xuống dòng là chặt 1 nhát
@@ -104,23 +105,22 @@ $all_chapters = new WP_Query(array(
     </div>
 </header>
 
-<main class="reader-container">
+<main class="reader-container" id="reader-pages">
     <?php
     if (!empty($chapter_images)):
-        if (is_array($chapter_images)):
-            foreach ($chapter_images as $image_url):
-                ?>
-                <img class="page-image" src="<?php echo esc_url($image_url); ?>" loading="lazy" alt="Trang truyện" style="min-height: 1000px; display: block; width: 100%;">
-                <?php
-            endforeach;
-        else:
-            // If it's a single image
+        foreach ($chapter_images as $index => $image_url):
+            $image_url = trim($image_url);
+            if (empty($image_url)) continue;
             ?>
-            <img class="page-image" src="<?php echo esc_url($chapter_images); ?>" alt="Page">
+            <img class="page-image page-lazy" 
+                 data-src="<?php echo esc_url($image_url); ?>" 
+                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" 
+                 alt="Trang <?php echo $index + 1; ?>" 
+                 style="min-height: 800px; display: block; width: 100%; margin: 0 auto;">
             <?php
-        endif;
+        endforeach;
     else:
-        echo '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Không có trang nào được tải</p>';
+        echo '<p style="text-align: center; color: var(--text-muted); padding: 40px;">⚠️ Không có trang nào được tải.<br><span style="font-size: 14px;">Vui lòng kiểm tra xem bạn đã nhập danh sách link ảnh vào ô "chapter_images" chưa.</span></p>';
     endif;
     ?>
 </main>
@@ -151,5 +151,4 @@ $all_chapters = new WP_Query(array(
     <?php endif; ?>
 </footer>
 
-
-<?php get_footer();
+<?php get_footer(); ?>

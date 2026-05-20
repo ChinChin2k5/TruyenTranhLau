@@ -201,6 +201,12 @@
     gap: 15px;
 }
 
+.manga-item .truyen-thumb-wrapper {
+    width: 90px;
+    height: 130px;
+    flex-shrink: 0;
+}
+
 .manga-thumb {
     width: 90px;
     height: 130px;
@@ -282,5 +288,238 @@
 
     .hero-slider-section {
         height: 600px;
+    }
+}
+/* --- SKELETON LOADING ANIMATION (SHIMMER) --- */
+
+
+/* --- 1. CHỈ DÀNH RIÊNG CHO POPULAR TITLES (HERO SLIDER: 240x340) --- */
+.slide .cover-image.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    display: block;
+    width: 240px;
+    height: 340px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+}
+
+/* Đảm bảo ảnh slider lúc chưa load hoặc đang load luôn giữ đúng form */
+.slide .cover-image img.delay-load {
+    width: 240px;
+    height: 340px;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0; /* Ẩn ảnh thật đi để lộ skeleton bên dưới */
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Khi Slider đã load xong thành công */
+.slide.loaded .cover-image img.delay-load {
+    opacity: 1;
+}
+.slide.loaded .cover-image.skeleton::after {
+    display: none; /* Tắt vệt sáng shimmer để tránh lỗi z-index */
+    animation: none;
+}
+
+/* Responsive cho Slider */
+@media (max-width: 768px) {
+    .slide .cover-image.skeleton,
+    .slide .cover-image img.delay-load {
+        width: 140px;
+        height: 200px;
+    }
+}
+
+
+/* --- 2. CHỈ DÀNH RIÊNG CHO LATEST UPDATES (GRID TRUYỆN: 90x130) --- */
+.manga-item .truyen-thumb-wrapper.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    display: block;
+    width: 90px;
+    height: 130px;
+    flex-shrink: 0;
+}
+
+/* Đảm bảo ảnh nhỏ ở grid lúc chưa load luôn giữ đúng form */
+.manga-item img.manga-thumb.delay-load {
+    width: 90px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 6px;
+    opacity: 0; /* Ẩn ảnh thật đi để lộ skeleton bên dưới */
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Khi item truyện ở grid đã load xong thành công */
+.manga-item.loaded img.manga-thumb.delay-load {
+    opacity: 1;
+}
+.manga-item.loaded .truyen-thumb-wrapper.skeleton::after {
+    display: none; /* Tắt vệt sáng shimmer để tránh lỗi z-index */
+    animation: none;
+}
+
+/* Hiển thị phần text thông tin truyện đồng bộ khi tải xong */
+.manga-item .manga-details {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+.manga-item.loaded .manga-details {
+    opacity: 1;
+}
+
+
+/* --- 3. HIỆU ỨNG ÁNH SÁNG QUÉT QUA (SHIMMER) CHUNG - CHỈ CHẠY ANIMATION, KHÔNG ĐẶT KÍCH THƯỚC --- */
+.truyen-thumb-wrapper.skeleton::after,
+.slide .cover-image.skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.05) 20%,
+        rgba(255, 255, 255, 0.1) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: custom-shimmer 1.5s infinite;
+}
+
+@keyframes custom-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 4. Ẩn ảnh thật khi đang load skeleton */
+img.delay-load {
+    opacity: 1;
+    opacity: 0;
+    transition: opacity 0.4s ease-in; /* Fade in nhẹ khi load xong */
+}
+
+/* 5. Hiển thị thông tin chữ đồng bộ (tùy chọn theo mẫu) */
+.truyen-item .manga-details,
+.manga-item .manga-details {
+    opacity: 0;
+    transition: opacity 0.4s ease-in;
+}
+
+.truyen-item.loaded .manga-details,
+.manga-item.loaded .manga-details {
+    opacity: 1;
+}
+/* 5. Trạng thái LOAD XONG (.loaded được thêm bằng JS) */
+.manga-item.loaded img.delay-load,
+.slide.loaded img.delay-load {
+    opacity: 1;
+}
+
+.manga-item.loaded .manga-details {
+    opacity: 1;
+}
+
+/* Tắt hiệu ứng Shimmer khi đã load xong để tránh đè Z-index lên ảnh */
+.loaded .truyen-thumb-wrapper.skeleton::after,
+.loaded .cover-image.skeleton::after {
+    display: none;
+    animation: none;
+}
+/* 
+   STYLE CHO KHU VỰC PHÂN TRANG (PAGINATION)
+*/
+.pagination-wrapper {
+    grid-column: 1 / -1; /* Đảm bảo khối phân trang trải dài hết hàng trong Grid */
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.pagination-wrapper ul.page-numbers {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 8px; /* Khoảng cách giữa các nút số */
+    align-items: center;
+}
+
+.pagination-wrapper ul.page-numbers li {
+    margin: 0;
+}
+
+/* Định dạng chung cho các ô số trang và nút Trước/Sau */
+.pagination-wrapper ul.page-numbers .page-numbers {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
+    background-color: var(--card-bg, #1c1c1e);
+    color: var(--text-main, #ffffff);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+/* Hiệu ứng khi di chuột (Hover) vào các nút */
+.pagination-wrapper ul.page-numbers a.page-numbers:hover {
+    background-color: var(--accent-color, #ff4560);
+    color: #ffffff;
+    border-color: var(--accent-color, #ff4560);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 69, 96, 0.3);
+}
+
+/* Trạng thái trang hiện tại (Active) */
+.pagination-wrapper ul.page-numbers .page-numbers.current {
+    background-color: var(--accent-color, #ff4560);
+    color: #ffffff;
+    border-color: var(--accent-color, #ff4560);
+    cursor: default;
+}
+
+/* Định dạng dấu ba chấm (...) khi có quá nhiều trang */
+.pagination-wrapper ul.page-numbers .page-numbers.dots {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--text-muted, #a0a0a0);
+    cursor: default;
+}
+
+/* Responsive cho thiết bị di động */
+@media (max-width: 480px) {
+    .pagination-wrapper ul.page-numbers .page-numbers {
+        min-width: 35px;
+        height: 35px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+    .pagination-wrapper {
+        margin-top: 25px;
+    }
+}
+/* Responsive cho Slider Skeleton */
+@media (max-width: 768px) {
+    .slide .cover-image.skeleton {
+        width: 140px;
+        height: 200px;
     }
 }
