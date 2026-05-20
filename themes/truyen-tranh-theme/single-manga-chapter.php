@@ -13,7 +13,7 @@ $chapter_title = get_post_meta($manga_id, '_chapter_title', true);
 $manga_title = get_post_parent();
 
 // Get chapter images from gallery or ACF field
-// HOTFIX HỆ "CƠ KHÍ":
+
 $raw_images = get_field('chapter_images', $manga_id); // Lấy cục text chứa các link ảnh
 
 if (!empty($raw_images)) {
@@ -31,7 +31,6 @@ if (!empty($raw_images)) {
 $current_post = get_post($manga_id);
 $parent_id = $current_post->post_parent;
 
-// --- BẮT ĐẦU ĐOẠN CODE SỬA LỖI ---
 // Tìm chương trước (số nhỏ hơn chương hiện tại)
 $prev_chapter_query = new WP_Query(array(
     'post_type' => 'manga-chapter',
@@ -59,7 +58,6 @@ $next_chapter_query = new WP_Query(array(
 ));
 $next_chapter = $next_chapter_query->have_posts() ? $next_chapter_query->next_post() : null;
 wp_reset_postdata();
-// --- KẾT THÚC ĐOẠN CODE SỬA LỖI ---
 
 // Get all chapters for dropdown
 $all_chapters = new WP_Query(array(
@@ -112,7 +110,7 @@ $all_chapters = new WP_Query(array(
         if (is_array($chapter_images)):
             foreach ($chapter_images as $image_url):
                 ?>
-                <img class="page-image" src="<?php echo esc_url($image_url); ?>" alt="Page">
+                <img class="page-image" src="<?php echo esc_url($image_url); ?>" loading="lazy" alt="Trang truyện" style="min-height: 1000px; display: block; width: 100%;">
                 <?php
             endforeach;
         else:

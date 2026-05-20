@@ -9,13 +9,13 @@
 // tránh lỗi trường hợp vòng lặp bị kẹt fallback về giao diện trang chủ (file "index.php")
 $post_type = get_post_type();
 
-if ($post_type === 'truyen') {
+if ($post_type === 'manga') {
     // Trang chi tiết bộ truyện
-    get_template_part('single', 'truyen');
+    get_template_part('single', 'manga');
 
-} elseif ($post_type === 'chuong') {
+} elseif ($post_type === 'manga-chapter') {
     // Trang đọc chương
-    get_template_part('single', 'chuong');
+    get_template_part('single', 'manga-chapter');
 
 } else {
     // Bài viết thông thường (post, page...)
@@ -28,7 +28,6 @@ if ($post_type === 'truyen') {
     </div>
     <?php get_footer();
 }
-// Đường dẫn trung gian để trỏ đến link giao diện Preview truyện (file "sigle-truyen.php")
 // tránh lỗi trường hợp vòng lặp bị kẹt fallback về giao diện trang chủ (file "index.php")
  * Single Manga Template
  * 

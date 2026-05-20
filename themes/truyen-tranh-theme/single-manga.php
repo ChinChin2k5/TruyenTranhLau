@@ -1,5 +1,5 @@
-get_header();
-?>
+<?php get_header(); ?>
+
 
 <div class="manga-banner">
     <div class="manga-banner-bg" style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url(get_the_ID(), 'full') ?: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop'); ?>');"></div>

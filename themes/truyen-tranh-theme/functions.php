@@ -1,15 +1,14 @@
-
 <?php
 /**
  * Truyen Tranh Theme - Functions
  * Author: Chiến, Đức, Duy
  *
+ * Tối ưu: Dùng thuần chuẩn post_parent (Hệ Parent/Son của Đức)
  * Lazy load: dùng thuần browser native (loading="lazy" + IntersectionObserver)
- * KHÔNG dùng lazysizes, KHÔNG dùng a3-lazy-load plugin
  */
 
 // 
-// 1. THEME SUPPORT
+// 1. THEME SUPPORT & MENU
 // 
 add_theme_support('post-thumbnails');
 add_theme_support('menus');
@@ -19,11 +18,11 @@ add_image_size('truyen-thumb', 200, 280, true);
 register_nav_menus(['primary' => 'Menu Chính']);
 
 // 
-// 2. ĐĂNG KÝ CUSTOM POST TYPE: truyen
+// 2. ĐĂNG KÝ CUSTOM POST TYPE & TAXONOMY
 // 
 add_action('init', function () {
 
-    // --- Post Type: Truyện ---
+    // --- Post Type: Bộ Truyện ---
     register_post_type('manga', [
         'labels' => [
             'name'          => 'Truyện Tranh',
@@ -39,7 +38,7 @@ add_action('init', function () {
         'show_in_rest'        => true,
         'supports'            => ['title', 'editor', 'thumbnail', 'excerpt'],
         'menu_icon'           => 'dashicons-book-alt',
-        'rewrite'             => ['slug' => 'truyen'],
+        'rewrite'             => ['slug' => 'manga'], // Đồng bộ slug tiếng Anh
     ]);
 
     // --- Post Type: Chương ---
@@ -55,14 +54,14 @@ add_action('init', function () {
         'public'              => true,
         'has_archive'         => false,
         'show_in_rest'        => true,
-        'hierarchical'        => true,
-        'supports'            => ['title', 'editor', 'thumbnail', 'page-attributes'],
+        'hierarchical'        => false, // CHÌA KHÓA FIX 404: Đổi thành false để URL phẳng, không bị lỗi nhận nhầm cha cùng loài
+        'supports'            => ['title', 'editor', 'thumbnail'], // XOÁ page-attributes vì đã có hộp chọn custom ở dưới
         'menu_icon'           => 'dashicons-media-document',
-        'rewrite'             => ['slug' => 'chuong'],
+        'rewrite'             => ['slug' => 'manga-chapter'], // Đồng bộ slug tiếng Anh
     ]);
 
     // --- Taxonomy: Thể loại ---
-    register_taxonomy('the_loai', ['truyen'], [
+    register_taxonomy('manga-genre', ['manga'], [ // Đổi từ 'truyen' sang 'manga' cho khớp dữ liệu
         'labels' => [
             'name'          => 'Thể loại',
             'singular_name' => 'Thể loại',
@@ -74,153 +73,93 @@ add_action('init', function () {
         'hierarchical'      => true,
         'public'            => true,
         'show_in_rest'      => true,
-        'rewrite'           => ['slug' => 'the-loai'],
+        'rewrite'           => ['slug' => 'manga-genre'],
         'show_admin_column' => true,
     ]);
 
 });
 
-// Flush rewrite sau khi đăng ký (bỏ comment, load 1 lần, rồi comment lại)
-// add_action('init', function(){ flush_rewrite_rules(); }, 99);
-
 // 
-// 3. SCRIPTS & STYLES
+// 3. ENQUEUE SCRIPTS & STYLES (Gộp sạch của cả Duy và Đức)
 // 
-add_action('wp_enqueue_scripts', function () {
-
-    // CSS theme
-    wp_enqueue_style('truyen-tranh-style', get_stylesheet_uri(), [], '1.2');
-
-    // main.js - IntersectionObserver lazy load cho trang đọc truyện
-    // KHÔNG enqueue lazysizes nữa — dùng native loading="lazy" + JS thuần
-    wp_enqueue_script(
-        'truyen-main',
-        get_template_directory_uri() . '/js/main.js',
-        [],   // không phụ thuộc lazysizes
-        '1.2',
-        true  // footer
-    );
-});
-
-// 
-// 4. BỎ FILTER truyen_add_lazy
-//    - Trước đây filter này inject loading="lazy" vào the_content
-//    - Gây conflict với a3-lazy-load và với markup <img loading="lazy"> có sẵn
-//    - Giờ để native browser tự xử lý qua attribute loading="lazy" trong template
-// 
-// (Không còn hàm truyen_add_lazy ở đây nữa)
-
-// 
-// 5. SỐ TRUYỆN MỖI TRANG
-// 
-add_action('pre_get_posts', function ($q) {
-    if (!is_admin() && $q->is_main_query() && $q->is_post_type_archive('truyen')) {
-        $q->set('posts_per_page', 20);
-    }
-});
-// SCRIPT CHẠY 1 LẦN ĐỂ TẠO 25 BỘ TRUYỆN + CHƯƠNG ĐỂ TEST PHÂN TRANG
-// add_action('admin_init', function() {
-//     // Kiểm tra xem đã tạo chưa để tránh trùng lặp khi F5
-//     // if (get_option('data_test_da_tao') === 'yes') {
-//     //     return; 
-//     // }
-
-//     for ($i = 1; $i <= 25; $i++) {
-//         // 1. Tạo bộ truyện tranh
-//         $truyen_id = wp_insert_post([
-//             'post_title'   => 'Bộ Truyện Tranh Thử Nghiệm Số ' . $i,
-//             'post_content' => 'Đây là nội dung giới thiệu chi tiết cho bộ truyện tranh thử nghiệm thứ ' . $i . '. Được tạo tự động để kiểm tra tính năng phân trang grid và hiệu ứng lazy load skeleton.',
-//             'post_status'  => 'publish',
-//             'post_type'    => 'truyen',
-//         ]);
-
-//         if (!is_wp_error($truyen_id) && $truyen_id) {
-//             // 2. Tạo 3 chương truyện đính kèm cho bộ truyện này
-//             for ($j = 1; $j <= 3; $j++) {
-//                 $chuong_id = wp_insert_post([
-//                     'post_title'   => 'Chương ' . $j . ' của truyện số ' . $i,
-//                     'post_content' => '<p>Ảnh 1: <img src="https://picsum.photos/800/1200?random=' . $i . $j . '1" /></p>
-//                                       <p>Ảnh 2: <img src="https://picsum.photos/800/1200?random=' . $i . $j . '2" /></p>',
-//                     'post_status'  => 'publish',
-//                     'post_type'    => 'chuong',
-//                 ]);
-
-//                 if (!is_wp_error($chuong_id)) {
-//                     // Liên kết chương vào bộ truyện thông qua ACF custom field "chọn_bộ_truyện"
-//                     update_post_meta($chuong_id, 'chọn_bộ_truyện', $truyen_id);
-//                 }
-//             }
-//         }
-//     }
-
-//     // Đánh dấu đã tạo thành công
-//     update_option('data_test_da_tao', 'yes');
-// });
-
-
-
-
-// Enqueue theme scripts and styles
 function truyen_tranh_theme_enqueue_assets() {
-    // Enqueue manga front page styles
-    wp_enqueue_style(
-        'manga-front-page-style',
-        get_template_directory_uri() . '/manga-front-page.css',
-        array(),
-        '1.0'
-    );
+    // CSS gốc của Theme và các file CSS giao diện của Đức
+    wp_enqueue_style('truyen-tranh-style', get_stylesheet_uri(), [], '1.2');
+    wp_enqueue_style('manga-front-page-style', get_template_directory_uri() . '/manga-front-page.css', array(), '1.0');
+    wp_enqueue_style('manga-info-style', get_template_directory_uri() . '/manga-info.css', array(), '1.0');
+    wp_enqueue_style('manga-reader-style', get_template_directory_uri() . '/manga-reader.css', array(), '1.0');
 
-    // Enqueue manga info styles
-    wp_enqueue_style(
-        'manga-info-style',
-        get_template_directory_uri() . '/manga-info.css',
-        array(),
-        '1.0'
-    );
-
-    // Enqueue manga reader styles
-    wp_enqueue_style(
-        'manga-reader-style',
-        get_template_directory_uri() . '/manga-reader.css',
-        array(),
-        '1.0'
-    );
-
-    // Enqueue 404 styles (only on 404 page)
     if (is_404()) {
-        wp_enqueue_style(
-            '404-style',
-            get_template_directory_uri() . '/404.css',
-            array(),
-            '1.0'
-        );
+        wp_enqueue_style('404-style', get_template_directory_uri() . '/404.css', array(), '1.0');
     }
 
-    // Enqueue manga slider script
-    wp_enqueue_script(
-        'manga-slider-script',
-        get_template_directory_uri() . '/manga-slider.js',
-        array(),
-        '1.0',
-        true
-    );
+    // JS Lazy Load tối ưu của Duy
+    wp_enqueue_script('truyen-main', get_template_directory_uri() . '/js/main.js', [], '1.2', true);
 
-    // Enqueue manga reader script
-    wp_enqueue_script(
-        'manga-reader-script',
-        get_template_directory_uri() . '/manga-reader.js',
-        array(),
-        '1.0',
-        true
-    );
+    // JS hiệu ứng Slider và Reader của Đức
+    wp_enqueue_script('manga-slider-script', get_template_directory_uri() . '/manga-slider.js', array(), '1.0', true);
+    wp_enqueue_script('manga-reader-script', get_template_directory_uri() . '/manga-reader.js', array(), '1.0', true);
 }
 add_action('wp_enqueue_scripts', 'truyen_tranh_theme_enqueue_assets');
 
-// Support featured images
-add_theme_support('post-thumbnails');
+// 
+// 4. CẤU HÌNH BỔ TRỢ (Query & Excerpt)
+// 
+add_action('pre_get_posts', function ($q) {
+    if (!is_admin() && $q->is_main_query() && $q->is_post_type_archive('manga')) {
+        $q->set('posts_per_page', 1);
+    }
+});
 
-// Custom excerpt length
-function custom_excerpt_length($length) {
+add_filter('excerpt_length', function($length) {
     return 15;
+});
+
+// 
+// 5. HACK GIAO DIỆN ADMIN: ÉP CHƯƠNG NHẬN TRUYỆN LÀM CHA (LƯU VÀO POST_PARENT)
+// 
+add_action('add_meta_boxes', function() {
+    add_meta_box(
+        'manga_parent_selector', 
+        '📚 Chọn Truyện Cha (Bắt buộc)', 
+        'render_manga_parent_box', 
+        'manga-chapter', 
+        'side', 
+        'high'
+    );
+});
+
+function render_manga_parent_box($post) {
+    $mangas = get_posts([
+        'post_type' => 'manga', 
+        'numberposts' => -1,
+        'post_status' => 'publish'
+    ]);
+    
+    echo '<select name="custom_manga_parent" style="width:100%; padding: 5px;">';
+    echo '<option value="0">-- Hãy chọn bộ truyện --</option>';
+    
+    foreach ($mangas as $manga) {
+        $selected = ($post->post_parent == $manga->ID) ? 'selected' : '';
+        echo '<option value="' . esc_attr($manga->ID) . '" ' . $selected . '>' . esc_html($manga->post_title) . '</option>';
+    }
+    echo '</select>';
+    echo '<p style="font-size:11px; color:#666; margin-top:5px;">Chọn đúng bộ truyện cha để kích hoạt tính năng chuyển chương ngoài Frontend.</p>';
 }
-add_filter('excerpt_length', 'custom_excerpt_length');
+
+add_action('save_post', function($post_id, $post) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if ($post->post_type !== 'manga-chapter') return;
+    
+    if (isset($_POST['custom_manga_parent'])) {
+        global $wpdb;
+        $parent_id = intval($_POST['custom_manga_parent']);
+        
+        $wpdb->update(
+            $wpdb->posts, 
+            ['post_parent' => $parent_id], 
+            ['ID' => $post_id]
+        );
+        clean_post_cache($post_id);
+    }
+}, 10, 2);
