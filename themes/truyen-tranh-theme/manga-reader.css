@@ -194,3 +194,7 @@ select.chapter-select {
         padding-right: 10px;
     }
 }
+/* Đẩy header truyện xuống 32px (bằng độ dày thanh Admin) nếu đang đăng nhập */
+body.admin-bar #reader-header {
+    top: 32px !important;
+}

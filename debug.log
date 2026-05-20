@@ -24,3 +24,5 @@
 [20-May-2026 10:58:19 UTC] PHP Warning:  Attempt to read property "max_num_pages" on null in /Applications/XAMPP/xamppfiles/htdocs/truyentranh/wp-content/themes/truyen-tranh-theme/front-page.php on line 86
 [20-May-2026 10:58:46 UTC] PHP Warning:  Undefined variable $latest_query in /Applications/XAMPP/xamppfiles/htdocs/truyentranh/wp-content/themes/truyen-tranh-theme/front-page.php on line 82
 [20-May-2026 10:58:46 UTC] PHP Warning:  Attempt to read property "max_num_pages" on null in /Applications/XAMPP/xamppfiles/htdocs/truyentranh/wp-content/themes/truyen-tranh-theme/front-page.php on line 82
+[20-May-2026 12:28:35 UTC] PHP Warning:  Undefined variable $latest_query in /Applications/XAMPP/xamppfiles/htdocs/truyentranh/wp-content/themes/truyen-tranh-theme/front-page.php on line 82
+[20-May-2026 12:28:35 UTC] PHP Warning:  Attempt to read property "max_num_pages" on null in /Applications/XAMPP/xamppfiles/htdocs/truyentranh/wp-content/themes/truyen-tranh-theme/front-page.php on line 82
