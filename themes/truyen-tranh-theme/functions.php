@@ -25,7 +25,7 @@ register_nav_menus(['primary' => 'Menu Chính']);
 add_action('init', function () {
 
     // --- Post Type: Truyện ---
-    register_post_type('truyen', [
+    register_post_type('manga', [
         'labels' => [
             'name'          => 'Truyện Tranh',
             'singular_name' => 'Bộ Truyện',
@@ -44,7 +44,7 @@ add_action('init', function () {
     ]);
 
     // --- Post Type: Chương ---
-    register_post_type('chuong', [
+    register_post_type('manga-chapter', [
         'labels' => [
             'name'          => 'Chương',
             'singular_name' => 'Chương',
