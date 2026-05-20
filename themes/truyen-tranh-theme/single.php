@@ -30,3 +30,8 @@ if ($post_type === 'truyen') {
 }
 // Đường dẫn trung gian để trỏ đến link giao diện Preview truyện (file "sigle-truyen.php")
 // tránh lỗi trường hợp vòng lặp bị kẹt fallback về giao diện trang chủ (file "index.php")
+ * Single Manga Template
+ * 
+ * Displays individual manga details with chapters list
+ */
+
