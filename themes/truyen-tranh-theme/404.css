@@ -1,0 +1,186 @@
+/* --- 404 Error Page CSS --- */
+:root {
+    --bg-dark: #16161e;
+    --bg-gradient: radial-gradient(circle at top left, #292036 0%, #16161e 40%, #181b2a 100%);
+    --text-main: #ffffff;
+    --text-muted: #94a3b8;
+    --gradient-404: linear-gradient(90deg, #df5bba 0%, #905cf4 50%, #6967f0 100%);
+    --gradient-btn: linear-gradient(90deg, #eb54a7 0%, #b854e6 100%);
+    --icon-bg: rgba(255, 255, 255, 0.03);
+    --icon-border: rgba(255, 255, 255, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-gradient);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.error-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Icon Box */
+.icon-box {
+    width: 100px;
+    height: 100px;
+    background: var(--icon-bg);
+    border: 1px solid var(--icon-border);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.02);
+}
+
+.icon-box svg {
+    width: 48px;
+    height: 48px;
+    color: #eb54a7;
+    stroke-width: 2;
+}
+
+/* 404 Text */
+.error-code {
+    font-size: 130px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 20px;
+    background: var(--gradient-404);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -2px;
+}
+
+/* Title and Description */
+.error-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+}
+
+.error-desc {
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 420px;
+    margin-bottom: 40px;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Outline Button */
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-outline:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Gradient Button */
+.btn-gradient {
+    background: var(--gradient-btn);
+    box-shadow: 0 0 20px rgba(235, 84, 167, 0.4);
+}
+
+.btn-gradient:hover {
+    box-shadow: 0 0 30px rgba(235, 84, 167, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .error-code {
+        font-size: 100px;
+    }
+
+    .error-title {
+        font-size: 20px;
+    }
+
+    .error-desc {
+        font-size: 14px;
+    }
+
+    .icon-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+    }
+
+    .icon-box svg {
+        width: 36px;
+        height: 36px;
+    }
+}
