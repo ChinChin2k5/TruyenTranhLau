@@ -13,32 +13,53 @@ $chapter_title = get_post_meta($manga_id, '_chapter_title', true);
 $manga_title = get_post_parent();
 
 // Get chapter images from gallery or ACF field
-$chapter_images = get_post_meta($manga_id, '_chapter_images', true);
-if (empty($chapter_images) && function_exists('get_field')) {
-    $chapter_images = get_field('chapter_images', $manga_id);
+// HOTFIX HỆ "CƠ KHÍ":
+$raw_images = get_field('chapter_images', $manga_id); // Lấy cục text chứa các link ảnh
+
+if (!empty($raw_images)) {
+    // Băm cục text ra thành nhiều mảnh, cứ thấy dấu xuống dòng là chặt 1 nhát
+    // str_replace("\r", "", ...) để tránh lỗi ký tự ẩn trên Windows/Mac
+    $chapter_images = explode("\n", str_replace("\r", "", $raw_images));
+    
+    // Xóa những dòng trống (trường hợp bị dư dấu enter)
+    $chapter_images = array_filter($chapter_images, 'trim'); 
+} else {
+    $chapter_images = array();
 }
 
 // Get previous and next chapters
 $current_post = get_post($manga_id);
 $parent_id = $current_post->post_parent;
 
-$prev_chapter = get_previous_post(
-    false,
-    '',
-    true,
-    'manga-chapter',
-    'taxonomy',
-    $parent_id
-);
+// --- BẮT ĐẦU ĐOẠN CODE SỬA LỖI ---
+// Tìm chương trước (số nhỏ hơn chương hiện tại)
+$prev_chapter_query = new WP_Query(array(
+    'post_type' => 'manga-chapter',
+    'post_parent' => $parent_id,
+    'posts_per_page' => 1,
+    'meta_query' => array(
+        array('key' => '_chapter_number', 'value' => $chapter_number, 'compare' => '<', 'type' => 'NUMERIC')
+    ),
+    'orderby' => 'meta_value_num',
+    'order' => 'DESC' // Lấy số gần nhất (ví dụ: đang ở 3 thì lấy 2)
+));
+$prev_chapter = $prev_chapter_query->have_posts() ? $prev_chapter_query->next_post() : null;
+wp_reset_postdata();
 
-$next_chapter = get_next_post(
-    false,
-    '',
-    true,
-    'manga-chapter',
-    'taxonomy',
-    $parent_id
-);
+// Tìm chương sau (số lớn hơn chương hiện tại)
+$next_chapter_query = new WP_Query(array(
+    'post_type' => 'manga-chapter',
+    'post_parent' => $parent_id,
+    'posts_per_page' => 1,
+    'meta_query' => array(
+        array('key' => '_chapter_number', 'value' => $chapter_number, 'compare' => '>', 'type' => 'NUMERIC')
+    ),
+    'orderby' => 'meta_value_num',
+    'order' => 'ASC' // Lấy số gần nhất (ví dụ: đang ở 3 thì lấy 4)
+));
+$next_chapter = $next_chapter_query->have_posts() ? $next_chapter_query->next_post() : null;
+wp_reset_postdata();
+// --- KẾT THÚC ĐOẠN CODE SỬA LỖI ---
 
 // Get all chapters for dropdown
 $all_chapters = new WP_Query(array(
@@ -131,5 +152,6 @@ $all_chapters = new WP_Query(array(
         </div>
     <?php endif; ?>
 </footer>
+
 
 <?php get_footer();
