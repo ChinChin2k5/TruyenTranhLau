@@ -20,7 +20,7 @@
     <?php
     $paged = max(1, get_query_var('paged'));
     $query = new WP_Query([
-        'post_type'      => 'truyen',
+        'post_type'      => 'manga',
         'post_status'    => 'publish',
         'posts_per_page' => 20,
         'paged'          => $paged,
@@ -34,7 +34,7 @@
             <?php while ($query->have_posts()) : $query->the_post(); 
                 // Khởi tạo bộ đếm chương chuẩn xác cho từng truyện
                 $chuong_q = new WP_Query([
-                    'post_type'      => 'chuong',
+                    'post_type'      => 'manga-chapter',
                     'post_status'    => 'publish',
                     'posts_per_page' => -1,
                     'fields'         => 'ids',

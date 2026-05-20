@@ -1,5 +1,4 @@
-<!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
- <!-- Bắt đầu cập nhật code của Duy -->
+
 <?php
 /**
  * Truyen Tranh Theme - Functions
@@ -56,7 +55,8 @@ add_action('init', function () {
         'public'              => true,
         'has_archive'         => false,
         'show_in_rest'        => true,
-        'supports'            => ['title', 'editor', 'thumbnail'],
+        'hierarchical'        => true,
+        'supports'            => ['title', 'editor', 'thumbnail', 'page-attributes'],
         'menu_icon'           => 'dashicons-media-document',
         'rewrite'             => ['slug' => 'chuong'],
     ]);
@@ -157,12 +157,8 @@ add_action('pre_get_posts', function ($q) {
 //     update_option('data_test_da_tao', 'yes');
 // });
 
-// <!-- /////////////////////////////////////////////////////////////////////////////////////////////// -->
-//  <!-- Kết thúc cập nhật code của Duy -->
-<?php
-/**
- * Theme Functions
- */
+
+
 
 // Enqueue theme scripts and styles
 function truyen_tranh_theme_enqueue_assets() {
